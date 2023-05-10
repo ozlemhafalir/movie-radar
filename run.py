@@ -56,6 +56,19 @@ def get_genres_of_movie(movie):
         return []
 
 
+def get_top_genre_movie_infos(top_genres_list):
+    """
+    Using the genre list, fetches top 50 movies and returns top 10 as MovieBasicInfo list
+    """
+    try:
+        top_genre_movies = cinemagoer.get_top50_movies_by_genres(top_genres_list)[:10]
+        top_genre_movie_infos = [MovieBasicInfo(movie) for movie in top_genre_movies]
+        return top_genre_movie_infos
+    except IMDbError:
+        print("Error during getting genre movies from Cinemagoer")
+        return []
+
+
 def get_user_movie_liking(movie):
     """
     Helper function to ask if user likes the movie,
@@ -115,7 +128,10 @@ def start_game(username):
                 "Please wait while we are fetching the genres of your favorite movies"
             )
             liked_genres = get_liked_genres_with_movies(liked_movies)
-            print(liked_genres)
+            suggested_movies = get_top_genre_movie_infos(
+                list(set(liked_genres.keys()))[:3]
+            )
+            print(suggested_movies)
         else:
             print("You didn't have enough likes for your movie taste to be calculated")
 
