@@ -1,6 +1,6 @@
 # Movie Radar
 
-[Movie Radar](https://movie-radar-app.herokuapp.com/) is a Python console application that suggests users list of movies based on genres of their likings among the random top 250 IMDB movies.
+[Movie Radar](https://movie-radar.herokuapp.com/) is a Python console application that suggests users list of movies based on genres of their likings among the random top 250 IMDB movies.
 
 ## Program Flow
 ![Program Flow](https://raw.githubusercontent.com/ozlemhafalir/movie-radar/main/assets/movie-radar-program-flow.jpg)
@@ -157,7 +157,7 @@ $ python run.py
 
 ### Pep8
 
-✅ Using pylint for run.py no issue was detected:
+✅ Using flake8 and pylint for run.py no issue was detected:
 
 ```shell
 % flake8 run.py
