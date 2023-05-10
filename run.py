@@ -113,6 +113,32 @@ def get_liked_genres_with_movies(movies):
     return liked_genres
 
 
+def get_suggestion_message(liked_genres):
+    """
+    Gets the top movies with liked_genres using Cinemagoer library,
+    and prints them to the console as suggestions.
+    """
+    top_genres_dict = dict(
+        sorted(liked_genres.items(), key=lambda item: item[1], reverse=True)
+    )
+    top_genres_list = [
+        genre_item[0] for genre_item in list(top_genres_dict.items())[:3]
+    ]
+    top_genre_movie_infos = get_top_genre_movie_infos(top_genres_list)
+    top_genre_movies_message = "\n".join(
+        [str(movie) for movie in top_genre_movie_infos]
+    )
+    message = f"""
+----------------------------------------------------------------------
+Your favorite genres are: {', '.join(top_genres_list)}
+Here are some suggestions for you:
+----------------------------------------------------------------------
+{top_genre_movies_message}
+"""
+    print(message)
+    return message
+
+
 def start_game(username):
     """
     Game logic
@@ -128,15 +154,13 @@ def start_game(username):
                 "Please wait while we are fetching the genres of your favorite movies"
             )
             liked_genres = get_liked_genres_with_movies(liked_movies)
-            suggested_movies = get_top_genre_movie_infos(
-                list(set(liked_genres.keys()))[:3]
-            )
-            print(suggested_movies)
+            message = get_suggestion_message(liked_genres)
         else:
             print("You didn't have enough likes for your movie taste to be calculated")
 
 
 def main():
+    """Starts the game."""
     username = input(
         f"""
 ----------------------------------------------------------------------
