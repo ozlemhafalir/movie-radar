@@ -3,12 +3,19 @@ Application for receiving the liked movies from user
 and suggest what to watch next.
 """
 import dataclasses
+import os
 import random
 
+from dotenv import load_dotenv
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
 from imdb import IMDbError, Cinemagoer
+
+load_dotenv()
 
 NUMBER_OF_MOVIES = 30
 NUMBER_OF_REQUIRED_LIKES = 5
+DRIVE_PARENT_DIRECTORY = os.environ.get("DRIVE_PARENT_DIRECTORY", "")
 
 cinemagoer = Cinemagoer()
 
@@ -139,11 +146,24 @@ Here are some suggestions for you:
     return message
 
 
+def create_and_print_certificate():
+    print(DRIVE_PARENT_DIRECTORY)
+    credentials = service_account.Credentials.from_service_account_file("creds.json")
+    drive_service = build("drive", "v3", credentials=credentials)
+    document_metadata = {
+        "name": "Certificate",  # Specify the name of the document
+        "parents": [DRIVE_PARENT_DIRECTORY],
+        "mimeType": "application/vnd.google-apps.document",
+    }
+    drive_service.files().create(body=document_metadata).execute()
+
+
 def start_game(username):
     """
     Game logic
     """
-    print(f"Hello, {username}")
+    create_and_print_certificate()
+    return
     random_movies = get_randomized_top_250_movies()
     if len(random_movies) == 0:
         print("Please try again later.")
