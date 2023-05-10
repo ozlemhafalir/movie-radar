@@ -41,6 +41,35 @@ def get_randomized_top_250_movies():
         return []
 
 
+def get_user_movie_liking(movie):
+    """
+    Helper function to ask if user likes the movie,
+    parse the answer and return bool value.
+    """
+    movie_basic_info = MovieBasicInfo(movie)
+    answer = input(f"> {movie_basic_info} \n")
+    while answer not in ["y", "n"]:
+        answer = input(
+            "Please answer with y or n. Do you like: " f"{movie_basic_info} \n"
+        )
+    return answer == "y"
+
+
+def get_liked_movies(movies):
+    """
+    For each movie, ask users if they like the move,
+    if yes, add genres to genres dictionary
+    :param movies: cinemagoer movies
+    """
+    liked_movies = []
+    for movie in movies:
+        if get_user_movie_liking(movie):
+            liked_movies.append(movie)
+            if len(liked_movies) == NUMBER_OF_REQUIRED_LIKES:
+                break
+    return liked_movies
+
+
 def start_game(username):
     """
     Game logic
@@ -50,7 +79,8 @@ def start_game(username):
     if len(random_movies) == 0:
         print("Please try again later.")
     else:
-        print(random_movies)
+        liked_movies = get_liked_movies(random_movies)
+        print(liked_movies)
 
 
 def main():
