@@ -9,6 +9,7 @@ import random
 from dotenv import load_dotenv
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+from googleapiclient.errors import Error
 from imdb import IMDbError, Cinemagoer
 
 load_dotenv()
@@ -146,24 +147,56 @@ Here are some suggestions for you:
     return message
 
 
-def create_and_print_certificate():
-    print(DRIVE_PARENT_DIRECTORY)
-    credentials = service_account.Credentials.from_service_account_file("creds.json")
-    drive_service = build("drive", "v3", credentials=credentials)
-    document_metadata = {
-        "name": "Certificate",  # Specify the name of the document
-        "parents": [DRIVE_PARENT_DIRECTORY],
-        "mimeType": "application/vnd.google-apps.document",
-    }
-    drive_service.files().create(body=document_metadata).execute()
+def create_and_print_certificate(username, message):
+    """
+    Creates a Google document, writes the username and message,
+    and returns the url of the document.
+    :param username: Name of the current user
+    :param message: The content of the document/certificate
+    :return: Url of the document/certificate
+    """
+    try:
+        credentials = service_account.Credentials.from_service_account_file(
+            "creds.json"
+        )
+        drive_service = build("drive", "v3", credentials=credentials)
+        docs_service = build("docs", "v1", credentials=credentials)
+        document_metadata = {
+            "name": "Certificate",  # Specify the name of the document
+            "parents": [DRIVE_PARENT_DIRECTORY],
+            "mimeType": "application/vnd.google-apps.document",
+        }
+        # pylint: disable=maybe-no-member
+        document = drive_service.files().create(body=document_metadata).execute()
+        document_id = document["id"]
+        certificate_content = f"""
+Hello, {username}!
+{message}"""
+        requests = [
+            {"insertText": {"location": {"index": 1}, "text": certificate_content}}
+        ]
+        # pylint: disable=maybe-no-member
+        docs_service.documents().batchUpdate(
+            documentId=document_id, body={"requests": requests}
+        ).execute()
+        # pylint: disable=maybe-no-member
+        certificate_url = (
+            drive_service.files()
+            .get(fileId=document_id, fields="webViewLink")
+            .execute()
+            .get("webViewLink")
+        )
+        print(f"You can download your certificate from: {certificate_url}")
+    except FileNotFoundError:
+        print("Couldn't find credentials file for certification")
+    except Error:
+        print("Google api error while creating certificate")
 
 
 def start_game(username):
     """
     Game logic
     """
-    create_and_print_certificate()
-    return
     random_movies = get_randomized_top_250_movies()
     if len(random_movies) == 0:
         print("Please try again later.")
@@ -175,6 +208,8 @@ def start_game(username):
             )
             liked_genres = get_liked_genres_with_movies(liked_movies)
             message = get_suggestion_message(liked_genres)
+            print("Creating your certificate")
+            create_and_print_certificate(username, message)
         else:
             print("You didn't have enough likes for your movie taste to be calculated")
 
