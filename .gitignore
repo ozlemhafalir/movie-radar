@@ -6,5 +6,7 @@ env.py
 __pycache__/
 *.py[cod]
 node_modules/
+venv/
+.idea/
 .github/
 creds.json
