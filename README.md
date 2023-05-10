@@ -1,6 +1,6 @@
 # Movie Radar
 
-Movie Radar is a Python console application that suggests users list of movies based on genres of their likings among the random top 250 IMDB movies.
+[Movie Radar](https://movie-radar-app.herokuapp.com/) is a Python console application that suggests users list of movies based on genres of their likings among the random top 250 IMDB movies.
 
 ## Program Flow
 ![Program Flow](https://raw.githubusercontent.com/ozlemhafalir/movie-radar/main/assets/movie-radar-program-flow.jpg)
@@ -124,3 +124,74 @@ You didn't have enough likes for your movie taste to be calculated
 Do you want to try again? (y/n): n
 
 ```
+
+
+## Deployment
+This application is deployed to Heroku, under: https://movie-radar.herokuapp.com/
+
+Heroku app is created using heroku/python and heroku/nodejs build packs.
+
+Heroku app is connected to the GitHub repository, listening to main branch, whenever a commit is pushed to the branch, Heroku triggers the pipeline and deploys the new version of the application.
+
+Since the project is using this template: https://github.com/Code-Institute-Org/python-essentials-template, everything needed for the application to run in Heroku is already implemented.
+
+Config vars for CREDS and DRIVE_PARENT_DIRECTORY are configured in Heroku
+
+
+## Testing
+
+### Running the application locally.
+You need to have a creds.json file for a service account that has access to drive and docs APIs.
+
+You should install the dependencies:
+
+```shell
+$ pip install -r requirements.txt
+```
+
+You can then run:
+
+```shell
+$ python run.py
+```
+
+### Pep8
+
+✅ Using pylint for run.py no issue was detected:
+
+```shell
+% pylint run.py
+
+--------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+```
+Only with the usage of `googleapiclient` I needed to ignore `# pylint: disable=maybe-no-member`
+This is how they handled in their official documentation as well: https://developers.google.com/drive/api/guides/manage-uploads
+
+✅ Program validates the user input and responds with useful message.
+
+
+## Known issues
+
+Getting genre takes some time. It is a slow function from Cinemagoer library.
+
+## References
+
+### Cinemagoer
+
+I searched for python libraries to get movies, there were other alternatives but this was the most up-to-date library.
+
+* [Cinemagoer Homepage](https://cinemagoer.github.io/)
+* [Cinemagoer GitHub Repository](https://github.com/cinemagoer/cinemagoer)
+
+The documentation was not great but was enough to make it work. It is still easy to use.
+
+### Google API Python Client
+
+The program creates a document (certificate) as output.
+
+In order to interact with Google Docs API and Google Drive API, I used this official library, following the official documentation: https://developers.google.com/docs/api/quickstart/python
+
+The Certificate files are created under a directory on my Google Drive, using a GCP service account that was given write access.
+
+Since the directory has read access to everyone with link, the url printed in the application is accessible to end users.
