@@ -222,7 +222,7 @@ def main():
 Welcome! You will be asked with {NUMBER_OF_MOVIES} random top 250 IMDB movies.
 Answer with y if like the movie, answer with n otherwise.
 When you have {NUMBER_OF_REQUIRED_LIKES} likes, we'll calculate your movie taste and suggest movies.
-Press enter a username/nickname to continue.
+Press enter a username/nickname to continue (optional).
 ----------------------------------------------------------------------
 """
     )
