@@ -41,6 +41,21 @@ def get_randomized_top_250_movies():
         return []
 
 
+def get_genres_of_movie(movie):
+    """
+    Helper function to get genres of movie,
+    by using Cinemagoer's get_movie function
+    Returns a list of genre string
+    """
+    try:
+        movie_info = cinemagoer.get_movie(movie.movieID)
+        genres = movie_info["genres"]
+        return genres
+    except IMDbError:
+        print("Error during getting movie from Cinemagoer")
+        return []
+
+
 def get_user_movie_liking(movie):
     """
     Helper function to ask if user likes the movie,
@@ -70,6 +85,21 @@ def get_liked_movies(movies):
     return liked_movies
 
 
+def get_liked_genres_with_movies(movies):
+    """
+    For each movie, ask users if they like the move,
+    if yes, add genres to genres dictionary
+    """
+    liked_genres = {}
+    for movie in movies:
+        print(f"> Fetching genres of {movie}...", end=": ", flush=True)
+        genres = get_genres_of_movie(movie)
+        print(genres)
+        for genre in genres:
+            liked_genres[genre] = liked_genres.get(genre, 0) + 1
+    return liked_genres
+
+
 def start_game(username):
     """
     Game logic
@@ -80,7 +110,14 @@ def start_game(username):
         print("Please try again later.")
     else:
         liked_movies = get_liked_movies(random_movies)
-        print(liked_movies)
+        if len(liked_movies) == NUMBER_OF_REQUIRED_LIKES:
+            print(
+                "Please wait while we are fetching the genres of your favorite movies"
+            )
+            liked_genres = get_liked_genres_with_movies(liked_movies)
+            print(liked_genres)
+        else:
+            print("You didn't have enough likes for your movie taste to be calculated")
 
 
 def main():
