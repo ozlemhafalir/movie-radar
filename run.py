@@ -2,14 +2,30 @@
 Application for receiving the liked movies from user
 and suggest what to watch next.
 """
-
+import dataclasses
 import random
 
 from imdb import IMDbError, Cinemagoer
 
 NUMBER_OF_MOVIES = 30
 NUMBER_OF_REQUIRED_LIKES = 5
+
 cinemagoer = Cinemagoer()
+
+
+@dataclasses.dataclass
+class MovieBasicInfo:
+    """Class definition for movie"""
+
+    title: str
+    year: str
+
+    def __init__(self, movie):
+        self.title = movie.data["title"]
+        self.year = movie.data.get("year", "")
+
+    def __str__(self):
+        return f"[{self.year}] {self.title}"
 
 
 def get_randomized_top_250_movies():
